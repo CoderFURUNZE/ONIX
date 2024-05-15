@@ -1,6 +1,6 @@
 #include <onix/onix.h>
-#include<onix/io.h>
-#include<onix/types.h>
+#include <onix/io.h>
+#include <onix/types.h>
 
 #define CRT_ADDR_REG 0x3d5
 #define CRT_DATA_REG 0x3d6
@@ -10,5 +10,5 @@
 
 void kernel_init()
 {
-   int a = 10;
+   u8 data = inb(CRT_DATA_REG);
 }
