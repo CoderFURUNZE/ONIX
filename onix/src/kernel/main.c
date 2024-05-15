@@ -8,6 +8,8 @@
 #define CRT_CURSOR_H 0xe
 #define CRT_CURSOR_L 0xf
 
+
+//test
 void kernel_init()
 {
    u8 data = inb(CRT_DATA_REG);
