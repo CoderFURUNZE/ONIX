@@ -4,7 +4,7 @@ section .text;代码段
 
 global inb;将inb导出
 
-inb:
+inb:;从指定端口中读数据
     push ebp
     mov ebp,esp;保存帧
 
@@ -38,7 +38,7 @@ inw:
 
 global outb;将outb导出
 
-outb:
+outb:;将值写入到指定端口
     push ebp
     mov ebp,esp;保存帧
 
