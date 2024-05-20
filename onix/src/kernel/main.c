@@ -4,6 +4,7 @@
 #include<onix/console.h>
 #include<onix/stdarg.h>
 #include<onix/printk.h>
+#include<onix/assert.h>
 #include<onix/stdio.h>
 
 #define CRT_ADDR_REG 0x3d4
@@ -17,9 +18,7 @@ char message[] = "hello onix!!!\n";
 void kernel_init()
 {
    console_init();
-   int cnt = 30;
-   while(cnt--){
-      printk("hello onix %#010x\n",cnt);
-   }
+   assert(3<5);
+   panic("Out of Memory");
    return;   
 }

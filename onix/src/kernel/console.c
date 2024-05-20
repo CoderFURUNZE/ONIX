@@ -178,11 +178,11 @@ void console_write(char* buf, u32 count) {
                 pos -= ROW_SIZE;
                 command_lf();
             }
-            *((char*)ptr) = ch;
-            ptr++;
-            *((char*)ptr) = attr;
-            ptr++;
-            pos += 2;
+            *((char*)pos) = ch;
+            pos++;
+            *((char*)pos) = attr;
+            pos++;
+            
             x++;
             break;
         }
