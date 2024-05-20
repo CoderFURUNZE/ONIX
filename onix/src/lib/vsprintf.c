@@ -1,5 +1,6 @@
 #include <onix/stdarg.h>
 #include <onix/string.h>
+#include <onix/assert.h>
 
 #define ZEROPAD 0x01 // 填充零
 #define SIGN 0x02    // unsigned/signed long
@@ -323,6 +324,16 @@ int vsprintf(char* buf, const char* fmt, va_list args) {
         case 'X':
             str = number(str, va_arg(args, unsigned long), 16, field_width, precision, flags);
             break;
+        //如果格式转换字符是'd','i'或'u',则表示对应参数是整数
+        case 'd':
+        case 'i':
+            //'d','i'代表符号整数,因此需要加上带符号标志
+            flags |= SIGN;
+        //'u' 代表无符号整数
+        case 'u':
+            str = number(str,va_arg(args,unsigned long),10,field_width,precision,flags);
+            break;
+        
             //若格式转换符是'n'
             //表示要把目前为止转换输出的字符数保存到对应参数指针指定的位置中
         case 'n':
@@ -346,7 +357,9 @@ int vsprintf(char* buf, const char* fmt, va_list args) {
         }
     }
     *str = '\0';
-    return str - buf;
+    i = str - buf;
+    assert(i < 1024);
+    return i;
 }
 
 //结果按格式输出字符串到buf

@@ -6,6 +6,8 @@
         "io.h": "c",
         "onix.h": "c",
         "limits": "c",
-        "ratio": "c"
+        "ratio": "c",
+        "stdio.h": "c",
+        "printk.h": "c"
     }
 }
