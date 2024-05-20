@@ -17,9 +17,9 @@ char message[] = "hello onix!!!\n";
 void kernel_init()
 {
    console_init();
-   int cnt = 10;
+   int cnt = 30;
    while(cnt--){
-      printk("hello onix %x\n",cnt);
+      printk("hello onix %#010x\n",cnt);
    }
    return;   
 }

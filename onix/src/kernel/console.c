@@ -54,7 +54,6 @@ static void set_screen() {
     outb(CRT_DATA_REG, ((screen - MEM_BASE) >> 9) & 0xff);
     outb(CRT_ADDR_REG, CRT_START_ADDR_L);
     outb(CRT_DATA_REG, ((screen - MEM_BASE) >> 1) & 0xff);
-    // screen |= inb(CRT_DATA_REG);
 }
 
 static void get_cursor() {
@@ -67,6 +66,7 @@ static void get_cursor() {
 
     pos <<= 1;
     pos += MEM_BASE;
+
     u32 delta = (pos - screen) >> 1;
     x = delta % WIDTH;
     y = delta / WIDTH;
@@ -87,7 +87,7 @@ void console_clear() {
     set_screen();
 
     u16* ptr = (u16*)MEM_BASE;
-    while (ptr < MEM_END) {
+    while (ptr < (u16*)MEM_END) {
         *ptr++ = erase;
     }
 }
@@ -178,11 +178,10 @@ void console_write(char* buf, u32 count) {
                 pos -= ROW_SIZE;
                 command_lf();
             }
-            *((char*)pos) = ch;
+            *((char*)ptr) = ch;
             ptr++;
-            *((char*)pos) = attr;
+            *((char*)ptr) = attr;
             ptr++;
-
             pos += 2;
             x++;
             break;
