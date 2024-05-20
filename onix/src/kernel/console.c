@@ -178,9 +178,9 @@ void console_write(char* buf, u32 count) {
                 pos -= ROW_SIZE;
                 command_lf();
             }
-            *ptr = ch;
+            *((char*)pos) = ch;
             ptr++;
-            *ptr = attr;
+            *((char*)pos) = attr;
             ptr++;
 
             pos += 2;

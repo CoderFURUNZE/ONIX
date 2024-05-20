@@ -4,6 +4,8 @@
         "string.h": "c",
         "types.h": "c",
         "io.h": "c",
-        "onix.h": "c"
+        "onix.h": "c",
+        "limits": "c",
+        "ratio": "c"
     }
 }

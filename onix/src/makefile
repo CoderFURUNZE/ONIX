@@ -7,13 +7,14 @@ CFLAGS:= -m32 # 32位的程序
 DEBUG:= -g
 INCLUDE:= -I$(SRC)/include
 
-CFLAGS+= -fno-builtin #不需要gcc内置函数
-CFLAGS+= -nostdinc #不需要标准头文件
-CFLAGS+= -fno-pic #不需要位置无关的代码 position independent code
-CFLAGS+= -fno-pie #不需要位置无关的可执行程序
-CFALGS+= -nostdlib #不需要标准困
-CFALGS+= -fno-stack-pretector#不需要栈保护
-CFALGS:=$(strip ${CFALGS})
+CFLAGS+= -fno-builtin			# 不需要 gcc 内置函数
+CFLAGS+= -nostdinc				# 不需要标准头文件
+CFLAGS+= -fno-pic				# 不需要位置无关的代码  position independent code
+CFLAGS+= -fno-pie				# 不需要位置无关的可执行程序 position independent executable
+CFLAGS+= -nostdlib				# 不需要标准库
+CFLAGS+= -fno-stack-protector	# 不需要栈保护
+
+CFLAGS:=$(strip ${CFLAGS})
 
 $(BUILD)/boot/%.bin: $(SRC)/boot/%.asm
 	$(shell mkdir -p $(dir $@))
@@ -30,8 +31,10 @@ $(BUILD)/%.o: $(SRC)/%.c
 $(BUILD)/kernel.bin: $(BUILD)/kernel/start.o \
 	$(BUILD)/kernel/main.o \
 	$(BUILD)/kernel/io.o \
-	$(BUILD)/lib/string.o \
 	$(BUILD)/kernel/console.o \
+	$(BUILD)/kernel/printk.o \
+	$(BUILD)/lib/string.o \
+	$(BUILD)/lib/vsprintf.o \
 
 	$(shell mkdir -p $(dir $@))
 	ld -m elf_i386 -static $^ -o $@ -Ttext $(ENTRYPOINT)
