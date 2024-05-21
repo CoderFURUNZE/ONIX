@@ -8,6 +8,8 @@
         "limits": "c",
         "ratio": "c",
         "stdio.h": "c",
-        "printk.h": "c"
+        "printk.h": "c",
+        "debug.h": "c",
+        "global.h": "c"
     }
 }

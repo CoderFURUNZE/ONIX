@@ -7,12 +7,13 @@
 #include<onix/assert.h>
 #include<onix/stdio.h>
 #include<onix/debug.h>
-
+#include<onix/global.h>
 void kernel_init()
 {
    console_init();
-   BMB;
+   // BMB;
    
-   DEBUGK("debug onix!!!\n");
+   // DEBUGK("debug onix!!!\n");
+   gdt_init();
    return;   
 }
