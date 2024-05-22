@@ -8,12 +8,14 @@
 #include<onix/stdio.h>
 #include<onix/debug.h>
 #include<onix/global.h>
+#include<onix/task.h>
 void kernel_init()
 {
    console_init();
    // BMB;
    
    // DEBUGK("debug onix!!!\n");
-   gdt_init();
+   // gdt_init();
+   task_init();
    return;   
 }
