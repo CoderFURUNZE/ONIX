@@ -11,6 +11,7 @@
         "printk.h": "c",
         "debug.h": "c",
         "global.h": "c",
-        "task.h": "c"
+        "task.h": "c",
+        "interrupt.h": "c"
     }
 }

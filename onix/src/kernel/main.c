@@ -9,13 +9,15 @@
 #include<onix/debug.h>
 #include<onix/global.h>
 #include<onix/task.h>
+#include<onix/interrupt.h>
 void kernel_init()
 {
    console_init();
    // BMB;
    
    // DEBUGK("debug onix!!!\n");
-   // gdt_init();
-   task_init();
+   gdt_init();
+   // task_init();
+   interrupt_init();
    return;   
 }
