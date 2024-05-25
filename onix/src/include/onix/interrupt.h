@@ -18,4 +18,5 @@ typedef struct gate_t {
 
 void interrupt_init();
 
+typedef void *handler_t; // 中断处理函数
 #endif
