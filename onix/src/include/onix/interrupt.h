@@ -5,6 +5,7 @@
 
 #define IDT_SIZE 256
 
+//中断描述符结构
 typedef struct gate_t
 {
     u16 offset0;    // 段内偏移 0 ~ 15 位

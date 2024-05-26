@@ -5,7 +5,7 @@
 
 #define GDT_SIZE 128
 
-// 全局描述符
+// 全局描述符结构
 typedef struct descriptor_t /* 共 8 个字节 */
 {
     unsigned short limit_low;      // 段界限 0 ~ 15 位
