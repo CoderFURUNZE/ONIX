@@ -16,13 +16,34 @@ interrupt_handler_%1:
 %endmacro
 
 interrupt_entry:
-
-    mov eax, [esp]
+    ;保存上文寄存器信息
+    push ds
+    push es
+    push fs
+    push gs;保护这些寄存器的值
+    pusha
+    
+    mov eax, [esp+12*4];找到前面 push %1 压入的中断向量,找到中断函数
+    push eax
 
     ; 调用中断处理函数，handler_table 中存储了中断处理函数的指针
     call [handler_table + eax * 4]
     ; 对应 push %1，调用结束恢复栈
-    add esp, 8
+    add esp, 4
+
+    ;恢复下文寄存器信息
+    
+    popa;使用 popa 指令恢复一般寄存器的值。
+        ;popa 指令会依次从堆栈中弹出 32 位的值，
+        ;分别存入 edi, esi, ebp, esp, ebx, edx, ecx, eax 寄存器中
+    pop gs
+    pop fs
+    pop es
+    pop ds
+
+    ;对应push %1
+    ;对应error code或push magic
+    add esp,8
     iret
 
 INTERRUPT_HANDLER 0x00, 0; divide by zero
