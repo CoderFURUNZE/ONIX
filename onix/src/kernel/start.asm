@@ -4,10 +4,11 @@ extern kernel_init
 
 global _start
 _start:
-    ; xchg bx,bx
     call kernel_init
+    xchg bx, bx
+    int 0x80; 调用 0x80 中断函数 系统调用
 
-    xchg bx,bx
+    ; mov bx, 0
+    ; div bx
 
-    int 0x80;调用0x80中断函数,系统调用
-    jmp $;阻塞
+    jmp $; 阻塞

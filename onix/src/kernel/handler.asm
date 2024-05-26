@@ -1,25 +1,27 @@
 [bits 32]
+; 中断处理函数入口 
 
 extern handler_table
 
 section .text
 
 %macro INTERRUPT_HANDLER 2
-interrupt_handler_%1
+interrupt_handler_%1:
 %ifn %2
     push 0x20222202
 %endif
-    push %1;压入中断向量,跳转到中断入口
+    push %1; 压入中断向量，跳转到中断入口
     jmp interrupt_entry
 %endmacro
 
 interrupt_entry:
-    mov eax,[esp]
 
-    ;调用中断处理函数,handler_table中存储量中断处理函数的指针
-    call [handler_table + eax*4]
-    ;对应push %1 调用结束回复栈
-    add esp,8
+    mov eax, [esp]
+
+    ; 调用中断处理函数，handler_table 中存储了中断处理函数的指针
+    call [handler_table + eax * 4]
+    ; 对应 push %1，调用结束恢复栈
+    add esp, 8
     iret
 
 INTERRUPT_HANDLER 0x00, 0; divide by zero
@@ -62,7 +64,24 @@ INTERRUPT_HANDLER 0x1d, 0; reserved
 INTERRUPT_HANDLER 0x1e, 0; reserved
 INTERRUPT_HANDLER 0x1f, 0; reserved
 
+INTERRUPT_HANDLER 0x20, 0; clock 时钟中断
+INTERRUPT_HANDLER 0x21, 0
+INTERRUPT_HANDLER 0x22, 0
+INTERRUPT_HANDLER 0x23, 0
+INTERRUPT_HANDLER 0x24, 0
+INTERRUPT_HANDLER 0x25, 0
+INTERRUPT_HANDLER 0x26, 0
+INTERRUPT_HANDLER 0x27, 0
+INTERRUPT_HANDLER 0x28, 0
+INTERRUPT_HANDLER 0x29, 0
+INTERRUPT_HANDLER 0x2a, 0
+INTERRUPT_HANDLER 0x2b, 0
+INTERRUPT_HANDLER 0x2c, 0
+INTERRUPT_HANDLER 0x2d, 0
+INTERRUPT_HANDLER 0x2e, 0
+INTERRUPT_HANDLER 0x2f, 0
 
+; 下面的数组记录了每个中断入口函数的指针
 section .data
 global handler_entry_table
 handler_entry_table:
@@ -98,3 +117,19 @@ handler_entry_table:
     dd interrupt_handler_0x1d
     dd interrupt_handler_0x1e
     dd interrupt_handler_0x1f
+    dd interrupt_handler_0x20
+    dd interrupt_handler_0x21
+    dd interrupt_handler_0x22
+    dd interrupt_handler_0x23
+    dd interrupt_handler_0x24
+    dd interrupt_handler_0x25
+    dd interrupt_handler_0x26
+    dd interrupt_handler_0x27
+    dd interrupt_handler_0x28
+    dd interrupt_handler_0x29
+    dd interrupt_handler_0x2a
+    dd interrupt_handler_0x2b
+    dd interrupt_handler_0x2c
+    dd interrupt_handler_0x2d
+    dd interrupt_handler_0x2e
+    dd interrupt_handler_0x2f

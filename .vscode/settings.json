@@ -12,6 +12,9 @@
         "debug.h": "c",
         "global.h": "c",
         "task.h": "c",
-        "interrupt.h": "c"
+        "interrupt.h": "c",
+        "bitset": "c",
+        "algorithm": "c",
+        "format": "c"
     }
 }
