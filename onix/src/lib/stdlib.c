@@ -1,9 +1,13 @@
-#include<onix/stdlib.h>
+#include <onix/stdlib.h>
 
-void delay(u32 count){
-    while(count--);
+void delay(u32 count)
+{
+    while (count--)
+        ;
 }
 
-void hang(){
-    while(true);
+void hang()
+{
+    while (true)
+        ;
 }

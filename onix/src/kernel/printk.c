@@ -1,10 +1,11 @@
-#include<onix/stdarg.h>
-#include<onix/console.h>
-#include<onix/stdio.h>
+#include <onix/stdarg.h>
+#include <onix/console.h>
+#include <onix/stdio.h>
 
 static char buf[1024];
 
-int printk(const char* fmt, ...) {
+int printk(const char *fmt, ...)
+{
     va_list args;
     int i;
 

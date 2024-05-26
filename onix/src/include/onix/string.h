@@ -1,7 +1,7 @@
-#ifndef STRING_H
-#define STRING_H
+#ifndef ONIX_STRING_H
+#define ONIX_STRING_H
 
-#include<onix/types.h>
+#include <onix/types.h>
 
 char *strcpy(char *dest, const char *src);
 char *strcat(char *dest, const char *src);

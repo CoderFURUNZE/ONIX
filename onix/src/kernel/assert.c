@@ -10,7 +10,8 @@ static u8 buf[1024];
 static void spin(char *name)
 {
     printk("spinning in %s ...\n", name);
-    while (true);
+    while (true)
+        ;
 }
 
 void assertion_failure(char *exp, char *file, char *base, int line)

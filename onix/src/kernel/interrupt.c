@@ -2,9 +2,8 @@
 #include <onix/global.h>
 #include <onix/debug.h>
 #include <onix/printk.h>
-#include<onix/stdlib.h>
 #include<onix/io.h>
-
+#include<onix/stdlib.h>
 #define LOGK(fmt, args...) DEBUGK(fmt, ##args)
 // #define LOGK(fmt, args...)
 
@@ -22,7 +21,7 @@ pointer_t idt_ptr;
 handler_t handler_table[IDT_SIZE];
 extern handler_t handler_entry_table[ENTRY_SIZE];
 
-static char *messages[] = {
+static char* messages[] = {
     "#DE Divide Error\0",
     "#DB RESERVED\0",
     "--  NMI Interrupt\0",
@@ -71,7 +70,7 @@ void default_handler(int vector)
 
 void exception_handler(int vector)
 {
-    char *message = NULL;
+    char* message = NULL;
     if (vector < 22)
     {
         message = messages[vector];
@@ -90,12 +89,12 @@ void exception_handler(int vector)
 void pic_init()
 {
     outb(PIC_M_CTRL, 0b00010001); // ICW1: 边沿触发, 级联 8259, 需要ICW4.
-    outb(PIC_M_DATA, 0x20);       // ICW2: 起始端口号 0x20
+    outb(PIC_M_DATA, 0x20);       // ICW2: 起始中断向量号 0x20
     outb(PIC_M_DATA, 0b00000100); // ICW3: IR2接从片.
     outb(PIC_M_DATA, 0b00000001); // ICW4: 8086模式, 正常EOI
 
     outb(PIC_S_CTRL, 0b00010001); // ICW1: 边沿触发, 级联 8259, 需要ICW4.
-    outb(PIC_S_DATA, 0x28);       // ICW2: 起始端口号 0x28
+    outb(PIC_S_DATA, 0x28);       // ICW2: 起始中断向量号 0x28
     outb(PIC_S_DATA, 2);          // ICW3: 设置从片连接到主片的 IR2 引脚
     outb(PIC_S_DATA, 0b00000001); // ICW4: 8086模式, 正常EOI
 
@@ -108,7 +107,7 @@ void idt_init()
 {
     for (size_t i = 0; i < ENTRY_SIZE; i++)
     {
-        gate_t *gate = &idt[i];
+        gate_t* gate = &idt[i];
         handler_t handler = handler_entry_table[i];
 
         gate->offset0 = (u32)handler & 0xffff;
@@ -126,7 +125,7 @@ void idt_init()
         handler_table[i] = exception_handler;
     }
 
-    for (size_t i = 0x20; i < ENTRY_SIZE; i++)
+    for (size_t i = 20; i < ENTRY_SIZE; i++)
     {
         handler_table[i] = default_handler;
     }
