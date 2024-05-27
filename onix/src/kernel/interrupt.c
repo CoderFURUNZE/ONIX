@@ -2,9 +2,9 @@
 #include <onix/global.h>
 #include <onix/debug.h>
 #include <onix/printk.h>
-#include<onix/io.h>
-#include<onix/stdlib.h>
-#include<onix/assert.h>
+#include <onix/stdlib.h>
+#include <onix/io.h>
+#include <onix/assert.h>
 
 #define LOGK(fmt, args...) DEBUGK(fmt, ##args)
 // #define LOGK(fmt, args...)
@@ -23,7 +23,7 @@ pointer_t idt_ptr;
 handler_t handler_table[IDT_SIZE];
 extern handler_t handler_entry_table[ENTRY_SIZE];
 
-static char* messages[] = {
+static char *messages[] = {
     "#DE Divide Error\0",
     "#DB RESERVED\0",
     "--  NMI Interrupt\0",
@@ -62,25 +62,31 @@ void send_eoi(int vector)
     }
 }
 
-void set_interrupt_handler(u32 irq, handler_t handler) {
-    assert(irq >= 0 && irq < 16);//如果条件不满足，程序会终止执行并输出相关错误信息
+void set_interrupt_handler(u32 irq, handler_t handler)
+{
+    assert(irq >= 0 && irq < 16);
     handler_table[IRQ_MASTER_NR + irq] = handler;
-
 }
 
-void set_interrupt_mask(u32 irq, bool enable) {
+void set_interrupt_mask(u32 irq, bool enable)
+{
     assert(irq >= 0 && irq < 16);
     u16 port;
-    if (irq < 8) {
+    if (irq < 8)
+    {
         port = PIC_M_DATA;
     }
-    else {
+    else
+    {
         port = PIC_S_DATA;
+        irq -= 8;
     }
-    if (enable) {
+    if (enable)
+    {
         outb(port, inb(port) & ~(1 << irq));
     }
-    else {
+    else
+    {
         outb(port, inb(port) | (1 << irq));
     }
 }
@@ -93,13 +99,14 @@ void default_handler(int vector)
     DEBUGK("[%x] default interrupt called %d...\n", vector, counter);
 }
 
-void exception_handler(int vector,
+void exception_handler(
+    int vector,
     u32 edi, u32 esi, u32 ebp, u32 esp,
     u32 ebx, u32 edx, u32 ecx, u32 eax,
     u32 gs, u32 fs, u32 es, u32 ds,
     u32 vector0, u32 error, u32 eip, u32 cs, u32 eflags)
 {
-    char* message = NULL;
+    char *message = NULL;
     if (vector < 22)
     {
         message = messages[vector];
@@ -108,6 +115,7 @@ void exception_handler(int vector,
     {
         message = messages[15];
     }
+
     printk("\nEXCEPTION : %s \n", messages[vector]);
     printk("   VECTOR : 0x%02X\n", vector);
     printk("    ERROR : 0x%08X\n", error);
@@ -141,7 +149,7 @@ void idt_init()
 {
     for (size_t i = 0; i < ENTRY_SIZE; i++)
     {
-        gate_t* gate = &idt[i];
+        gate_t *gate = &idt[i];
         handler_t handler = handler_entry_table[i];
 
         gate->offset0 = (u32)handler & 0xffff;
