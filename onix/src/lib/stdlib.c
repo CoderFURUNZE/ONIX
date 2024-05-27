@@ -5,7 +5,7 @@ void delay(u32 count)
     while (count--)
         ;
 }
-
+//阻塞
 void hang()
 {
     while (true)

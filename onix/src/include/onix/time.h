@@ -3,6 +3,7 @@
 
 #include <onix/types.h>
 
+//定义时间的结构体
 typedef struct tm
 {
     int tm_sec;   // 秒数 [0，59]
