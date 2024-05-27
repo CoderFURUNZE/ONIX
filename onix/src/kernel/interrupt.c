@@ -4,6 +4,8 @@
 #include <onix/printk.h>
 #include<onix/io.h>
 #include<onix/stdlib.h>
+#include<onix/assert.h>
+
 #define LOGK(fmt, args...) DEBUGK(fmt, ##args)
 // #define LOGK(fmt, args...)
 
@@ -60,19 +62,42 @@ void send_eoi(int vector)
     }
 }
 
-extern void schedule();
+void set_interrupt_handler(u32 irq, handler_t handler) {
+    assert(irq >= 0 && irq < 16);//如果条件不满足，程序会终止执行并输出相关错误信息
+    handler_table[IRQ_MASTER_NR + irq] = handler;
+
+}
+
+void set_interrupt_mask(u32 irq, bool enable) {
+    assert(irq >= 0 && irq < 16);
+    u16 port;
+    if (irq < 8) {
+        port = PIC_M_DATA;
+    }
+    else {
+        port = PIC_S_DATA;
+    }
+    if (enable) {
+        outb(port, inb(port) & ~(1 << irq));
+    }
+    else {
+        outb(port, inb(port) | (1 << irq));
+    }
+}
+
+u32 counter = 0;
 
 void default_handler(int vector)
 {
     send_eoi(vector);
-    schedule();
+    DEBUGK("[%x] default interrupt called %d...\n", vector, counter);
 }
 
 void exception_handler(int vector,
-    u32 edi,u32 esi,u32 ebp,u32 esp,
-    u32 ebx,u32 edx,u32 ecx,u32 eax,
-    u32 gs,u32 fs,u32 es,u32 ds,
-    u32 vector0,u32 error,u32 eip,u32 cs,u32 eflags)
+    u32 edi, u32 esi, u32 ebp, u32 esp,
+    u32 ebx, u32 edx, u32 ecx, u32 eax,
+    u32 gs, u32 fs, u32 es, u32 ds,
+    u32 vector0, u32 error, u32 eip, u32 cs, u32 eflags)
 {
     char* message = NULL;
     if (vector < 22)
@@ -107,7 +132,7 @@ void pic_init()
     outb(PIC_S_DATA, 2);          // ICW3: 设置从片连接到主片的 IR2 引脚
     outb(PIC_S_DATA, 0b00000001); // ICW4: 8086模式, 正常EOI
 
-    outb(PIC_M_DATA, 0b11111110); // 关闭所有中断
+    outb(PIC_M_DATA, 0b11111111); // 关闭所有中断
     outb(PIC_S_DATA, 0b11111111); // 关闭所有中断
 }
 
@@ -134,7 +159,7 @@ void idt_init()
         handler_table[i] = exception_handler;
     }
 
-    for (size_t i = 20; i < ENTRY_SIZE; i++)
+    for (size_t i = 0x20; i < ENTRY_SIZE; i++)
     {
         handler_table[i] = default_handler;
     }

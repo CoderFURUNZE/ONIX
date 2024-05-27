@@ -43,6 +43,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/lib/string.o \
 	$(BUILD)/lib/vsprintf.o \
 	$(BUILD)/lib/stdlib.o \
+	$(BUILD)/kernel/clock.o \
 
 	$(shell mkdir -p $(dir $@))
 	ld -m elf_i386 -static $^ -o $@ -Ttext $(ENTRYPOINT)
@@ -82,7 +83,9 @@ qemu: $(BUILD)/master.img
 	qemu-system-i386 \
 	-m 32M \
 	-boot c \
-	-hda $<
+	-drive file=$<,if=ide,index=0,media=disk,format=raw \
+	-audiodev pa,id=hda \
+	-machine pcspk-audiodev=hda \
 
 .PHONY: qemug
 qemug: $(BUILD)/master.img
@@ -90,7 +93,9 @@ qemug: $(BUILD)/master.img
 	-s -S \
 	-m 32M \
 	-boot c \
-	-hda $<
+	-drive file=$<,index=0,media=disk,format=raw \
+	-audiodev pa,id=hda \
+	-machine pcspk-audiodev=hda \
 
 $(BUILD)/master.vmdk: $(BUILD)/master.img
 	qemu-img convert -O vmdk $< $@

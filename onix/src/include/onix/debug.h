@@ -1,4 +1,3 @@
-
 #ifndef ONIX_DEBUG_H
 #define ONIX_DEBUG_H
 
