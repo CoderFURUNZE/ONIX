@@ -87,9 +87,11 @@ void set_alarm(u32 secs)
     {
         time.tm_hour %= 24;
     }
-
+    //将更新后的小时数写入到 CMOS 的小时寄存器（CMOS_HOUR）中。在写入之前，使用 bin_to_bcd 函数将二进制表示的小时数转换为 BCD 格式（Binary-Coded Decimal），以符合 CMOS 寄存器的格式要求。
     cmos_write(CMOS_HOUR, bin_to_bcd(time.tm_hour));
+    //将更新后的分钟数写入到 CMOS 的分钟寄存器（CMOS_MINUTE）中。同样，先将二进制表示的分钟数转换为 BCD 格式。
     cmos_write(CMOS_MINUTE, bin_to_bcd(time.tm_min));
+    //将更新后的秒数写入到 CMOS 的秒寄存器（CMOS_SECOND）中。同样，先将二进制表示的秒数转换为 BCD 格式。
     cmos_write(CMOS_SECOND, bin_to_bcd(time.tm_sec));
 }
 
