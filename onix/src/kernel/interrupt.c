@@ -62,12 +62,14 @@ void send_eoi(int vector)
     }
 }
 
+// 这个函数用于设置特定中断请求（IRQ）的中断处理程序(设置中断函数)
 void set_interrupt_handler(u32 irq, handler_t handler)
 {
     assert(irq >= 0 && irq < 16);
     handler_table[IRQ_MASTER_NR + irq] = handler;
 }
 
+//这个函数用于启用或禁用特定 IRQ 的中断(打开中断屏蔽字)
 void set_interrupt_mask(u32 irq, bool enable)
 {
     assert(irq >= 0 && irq < 16);
