@@ -7,7 +7,7 @@
             "program": "${workspaceFolder}/onix/build/kernel.bin",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}/src",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
