@@ -9,7 +9,7 @@ inb:
 
     xor eax, eax ; 将 eax 清空
     mov edx, [ebp + 8]; port 
-    in al, dx; 将端口号 dx 的 8 bit 输入到 al
+    in al, dx; 将端口号 dx 的 8 bit 输入到 al,从指定端口读取数据
 
     jmp $+2 ; 一点点延迟
     jmp $+2 ; 一点点延迟
@@ -25,7 +25,7 @@ outb:
 
     mov edx, [ebp + 8]; port 
     mov eax, [ebp + 12]; value
-    out dx, al; 将 al 中的 8 bit 输入出到 端口号 dx
+    out dx, al; 将 al 中的 8 bit 输入出到 端口号 dx,向指定端口写入数据
 
     jmp $+2 ; 一点点延迟
     jmp $+2 ; 一点点延迟

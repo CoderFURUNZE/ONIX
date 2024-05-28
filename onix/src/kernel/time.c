@@ -1,7 +1,8 @@
 #include <onix/time.h>
 #include <onix/debug.h>
 #include <onix/stdlib.h>
-#include<onix/io.h>
+#include <onix/rtc.h>
+
 #define LOGK(fmt, args...) DEBUGK(fmt, ##args)
 
 #define CMOS_ADDR 0x70 // CMOS 地址寄存器
@@ -104,14 +105,6 @@ int get_yday(tm *time)
     return res;
 }
 
-//用于从 CMOS（实时时钟芯片）中读取数据
-u8 cmos_read(u8 addr)
-{
-    outb(CMOS_ADDR, CMOS_NMI | addr);//写入的数据是为了告诉 CMOS 要读取或写入哪个特定的寄存器
-    return inb(CMOS_DATA);//从特定的寄存器读取数据
-};
-
-//用于从 CMOS（实时时钟芯片）中读取时间信息，并以 BCD（二进制编码的十进制）格式存储到传入的 tm 结构体中
 void time_read_bcd(tm *time)
 {
     // CMOS 的访问速度很慢。为了减小时间误差，在读取了下面循环中所有数值后，
@@ -130,7 +123,6 @@ void time_read_bcd(tm *time)
     } while (time->tm_sec != cmos_read(CMOS_SECOND));
 }
 
-//用于读取并解析 CMOS（实时时钟芯片）中的时间信息，并将其存储到传入的 tm 结构体中
 void time_read(tm *time)
 {
     time_read_bcd(time);
@@ -146,7 +138,6 @@ void time_read(tm *time)
     century = bcd_to_bin(century);
 }
 
-//初始化时间
 void time_init()
 {
     tm time;
@@ -160,5 +151,4 @@ void time_init()
          time.tm_hour,
          time.tm_min,
          time.tm_sec);
-         hang();
 }
