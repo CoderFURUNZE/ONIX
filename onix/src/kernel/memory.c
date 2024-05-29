@@ -180,7 +180,7 @@ static _inline void enable_page() {
         "movl %eax,%cr0\n");
 }
 
-//初始化页表项
+//初始化页表项和页目录
 static void entry_init(page_entry_t* entry, u32 index) {
     *(u32*)entry = 0;
     entry->present = 1;
@@ -198,19 +198,25 @@ static void entry_init(page_entry_t* entry, u32 index) {
 //初始化内存映射
 void mapping_init()
 {
-    page_entry_t *pde = (page_entry_t *)KERNEL_PAGE_DIR;
+    page_entry_t *pde = (page_entry_t *)KERNEL_PAGE_DIR;//获取页目录的指针
     memset(pde, 0, PAGE_SIZE);
 
     idx_t index = 0;
 
     for (idx_t didx = 0; didx < (sizeof(KERNEL_PAGE_TABLE) / 4); didx++)
     {
+        //获取一个页表的首地址
         page_entry_t *pte = (page_entry_t *)KERNEL_PAGE_TABLE[didx];
         memset(pte, 0, PAGE_SIZE);
 
+        //获取页目录中的一个页目录项的指针
         page_entry_t *dentry = &pde[didx];
+
+        //初始化页目录项
         entry_init(dentry, IDX((u32)pte));
 
+
+        //初始化页表中的页表项，同时更新内存映射数组，标记对应的物理页为已被占用
         for (idx_t tidx = 0; tidx < 1024; tidx++, index++)
         {
             // 第 0 页不映射，为造成空指针访问，缺页异常，便于排错
@@ -235,11 +241,13 @@ void mapping_init()
     enable_page();
 }
 
+//这段代码是用于获取页目录（Page Directory）的指针
 static page_entry_t *get_pde()
 {
     return (page_entry_t *)(0xfffff000);
 }
 
+//获取给定虚拟地址对应的页表项（Page Table Entry, PTE）的指针
 static page_entry_t *get_pte(u32 vaddr)
 {
     return (page_entry_t *)(0xffc00000 | (DIDX(vaddr) << 12));
@@ -259,7 +267,6 @@ void memory_test()
     // 将 20 M 0x1400000 内存映射到 64M 0x4000000 的位置
 
     // 我们还需要一个页表，0x900000
-
     u32 vaddr = 0x4000000; // 线性地址几乎可以是任意的
     u32 paddr = 0x1400000; // 物理地址必须要确定存在
     u32 table = 0x900000;  // 页表也必须是物理地址
