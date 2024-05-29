@@ -22,8 +22,7 @@ void kernel_init()
 
     BMB;
 
-    char *ptr = (char *)(0x100000 * 20);
-    ptr[0] = 'a';
+    memory_test();
 
     // asm volatile("sti");
     hang();
