@@ -13,7 +13,8 @@
 
 #define IDX(addr) ((u32)addr >> 12) //获取addr的页索引
 #define PAGE(idx) ((u32)idx << 12)  // 获取页索引 idx 对应的页开始的位置
-#define ASSERT_PAGE(addr) assert((addr & 0xfff) == 0)
+#define ASSERT_PAGE(addr) assert((addr & 0xfff) == 0)  //检查地址是否对齐代码
+                                                       //通过检查地址的最低12位是否为0来确保地址是以4KB为边界对齐的
 
 typedef struct ards_t
 {
@@ -142,12 +143,65 @@ static void put_page(u32 addr) {
     LOGK("PUT page 0x%p\n", addr);
 }   
 
-void memory_test(){
-    u32 pages[10];
-    for(size_t i = 0;i<10;i++){
-        pages[i] = get_page();
+//得到cr3寄存器
+u32 inline get_cr3(){
+    //直接将mov eax,cr3返回值在eax中
+    asm volatile("movl %cr3,%eax\n");
+}
+
+//设置cr3寄存器,参数是页目录的地址
+void inline set_cr3(u32 pde){
+    ASSERT_PAGE(pde);  //确保传入的页目录条目 pde 是按页面对齐的
+    asm volatile("movl %%eax,%%cr3\n"::"a"(pde));  //
+}
+
+//将cr0寄存器最高位PE置为1,启动分页
+static inline void enable_page(){
+    //0b1000_0000_0000_0000_0000_0000_0000_0000
+    //0x800000000
+    asm volatile("movl %cr0,%eax\n"
+                 "orl $0x80000000,%eax\n"
+                 "movl %eax,%cr0\n");
+}
+
+//初始化页表项
+static void entry_init(page_entry_t* entry,u32 index){
+    *(u32*)entry = 0;
+    entry->present = 1;
+    entry->write = 1;
+    entry->user = 1;
+    entry->index = index;
+}
+
+//内核页目录
+#define KERNEL_PAGE_DIR 0x200000
+
+//内核页表
+#define KERNEL_PAGE_ENTRY 0x201000
+
+//初始化内存映射
+void mapping_init(){
+    page_entry_t* pde = (page_entry_t*)KERNEL_PAGE_DIR;
+    memset(pde,0,PAGE_SIZE);
+
+    entry_init(&pde[0],IDX(KERNEL_PAGE_ENTRY));//初始化页目录
+
+    page_entry_t* pte = (page_entry_t*)KERNEL_PAGE_ENTRY;
+    memset(pte,0,PAGE_SIZE);
+
+    /*初始化页表*/
+    page_entry_t* entry;
+    for(size_t tidx = 0;tidx < 1024;tidx++){
+        entry = &pte[tidx];
+        entry_init(entry,tidx);
+        memory_map[tidx] = 1;//设置物理内存数组,该页被占用
     }
-    for(size_t i = 0;i<10;i++){
-        put_page(pages[i]);
-    }
+    BMB;
+
+    //设置cr3寄存器
+    set_cr3((u32)pde);
+    BMB;
+
+    //分页有效
+    enable_page();
 }
