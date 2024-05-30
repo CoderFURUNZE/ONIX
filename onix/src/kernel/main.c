@@ -9,7 +9,7 @@ extern void clock_init();
 extern void time_init();
 extern void rtc_init();
 extern void hang();
-
+extern void memory_test();
 void kernel_init()
 {
     memory_map_init();
@@ -18,9 +18,6 @@ void kernel_init()
     // clock_init();
     // time_init();
     // rtc_init();
-
-
-    BMB;
 
     memory_test();
 
