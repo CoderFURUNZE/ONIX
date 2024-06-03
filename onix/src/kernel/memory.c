@@ -17,8 +17,7 @@
 #define PAGE(idx) ((u32)idx << 12)  // 获取页索引 idx 对应的页开始的位置
 #define ASSERT_PAGE(addr) assert((addr & 0xfff) == 0)  //检查地址是否对齐代码
 
-// 内核页目录索引
-#define KERNEL_PAGE_DIR 0x1000
+
 
 // 内核页表索引
 static u32 KERNEL_PAGE_TABLE[] = {
@@ -301,17 +300,4 @@ void free_kpage(u32 vaddr, u32 count) {
     assert(count > 0);
     reset_page(&kernel_map, vaddr, count);
     LOGK("FREE kernel pages 0x%p count %d\n", vaddr, count);
-}
-
-void memory_test() {
-    u32* pages = (u32*)(0x200000);
-    u32 count = 0x6fe;
-    for (size_t i = 0;i < count;i++) {
-        pages[i] = alloc_kpage(1);
-        LOGK("0x%x\n", i);
-    }
-
-    for (size_t i = 0;i < count;i++) {
-        free_kpage(pages[i], 1);
-    }
 }

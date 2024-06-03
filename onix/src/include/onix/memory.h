@@ -6,6 +6,9 @@
 #define PAGE_SIZE 0x1000     // 一页的大小 4K
 #define MEMORY_BASE 0x100000 // 1M，可用内存开始的位置
 
+// 内核页目录索引
+#define KERNEL_PAGE_DIR 0x1000
+
 typedef struct page_entry_t
 {
     u8 present : 1;  // 在内存中
@@ -21,7 +24,16 @@ typedef struct page_entry_t
     u32 index : 20;  // 页索引
 } _packed page_entry_t;
 
+// 得到 cr3 寄存器
 u32 get_cr3();
+
+// 设置 cr3 寄存器，参数是页目录的地址
 void set_cr3(u32 pde);
+
+// 分配 count 个连续的内核页
+u32 alloc_kpage(u32 count);
+
+// 释放 count 个连续的内核页
+void free_kpage(u32 vaddr, u32 count);
 
 #endif

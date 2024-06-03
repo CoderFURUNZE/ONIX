@@ -23,7 +23,7 @@ pointer_t idt_ptr;
 handler_t handler_table[IDT_SIZE];
 extern handler_t handler_entry_table[ENTRY_SIZE];
 
-static char *messages[] = {
+static char* messages[] = {
     "#DE Divide Error\0",
     "#DB RESERVED\0",
     "--  NMI Interrupt\0",
@@ -93,12 +93,39 @@ void set_interrupt_mask(u32 irq, bool enable)
     }
 }
 
-u32 counter = 0;
+//清除IF位,返回设置之前的值
+bool interrupt_disable() {
+    asm volatile(
+        "pushfl\n"   //将当前eflags压入栈中
+        "cli\n"      //清除IF位,此时外中断已被屏蔽
+        "popl %eax\n"   //将刚才压入的eflags弹出eax
+        "shrl $9,%eax\n"//将eax右移 9位,得到IF位
+        "andl $1,%eax\n"//只需要IF位
+        );
+}
+
+//获得IF位
+bool get_interrupt_state() {
+    asm volatile(
+        "pushfl\n"      //将当前eflags压入栈中
+        "popl %eax\n"   //将压入的eflags弹出到eax
+        "shrl $9,%eax\n"//将eax右移9位,得到IF位
+        "andl $1,%eax\n"//只需要 IF 位
+        );
+}
+
+//设置IF位
+void set_interrupt_state(bool state){
+    if(state)
+        asm volatile("sti\n");
+    else
+        asm volatile("cli\n");
+}
 
 void default_handler(int vector)
 {
     send_eoi(vector);
-    DEBUGK("[%x] default interrupt called %d...\n", vector, counter);
+    DEBUGK("[%x] default interrupt called ...\n", vector);
 }
 
 void exception_handler(
@@ -108,7 +135,7 @@ void exception_handler(
     u32 gs, u32 fs, u32 es, u32 ds,
     u32 vector0, u32 error, u32 eip, u32 cs, u32 eflags)
 {
-    char *message = NULL;
+    char* message = NULL;
     if (vector < 22)
     {
         message = messages[vector];
@@ -151,7 +178,7 @@ void idt_init()
 {
     for (size_t i = 0; i < ENTRY_SIZE; i++)
     {
-        gate_t *gate = &idt[i];
+        gate_t* gate = &idt[i];
         handler_t handler = handler_entry_table[i];
 
         gate->offset0 = (u32)handler & 0xffff;
