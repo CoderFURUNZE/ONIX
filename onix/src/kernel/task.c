@@ -69,6 +69,10 @@ void schedule()
     if (current->state == TASK_RUNNING) {
         current->state = TASK_READY;
     }
+    if (!current->ticks)
+    {
+        current->ticks = current->priority;
+    }
 
     next->state = TASK_RUNNING;
     if (next == current) {
@@ -101,7 +105,7 @@ static task_t *task_create(target_t target, const char *name, u32 priority, u32 
     task->state = TASK_READY;
     task->uid = uid;
     task->vmap = &kernel_map;
-    task->pde = KERNEL_PAGE_DIR;
+    task->pde = KERNEL_PAGE_DIR; // page directory entry
     task->magic = ONIX_MAGIC;
 
     return task;
