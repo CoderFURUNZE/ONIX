@@ -16,6 +16,7 @@
         "bitset": "c",
         "algorithm": "c",
         "format": "c",
-        "memory.h": "c"
+        "memory.h": "c",
+        "syscall.h": "c"
     }
 }
