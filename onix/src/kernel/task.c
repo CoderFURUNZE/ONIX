@@ -6,6 +6,7 @@
 #include <onix/interrupt.h>
 #include <onix/string.h>
 #include <onix/bitmap.h>
+#include <onix/syscall.h>
 
 extern bitmap_t kernel_map;
 extern void task_switch(task_t *next);
@@ -51,6 +52,13 @@ static task_t *task_search(task_state_t state)
     return task;
 }
 
+void task_yield()
+{
+    schedule();
+}
+
+/* 这段代码假定每个任务的堆栈位于一个独立的 4KB 页面中，并且任务结构体也与该页面对齐。
+通过将 esp 的值与 0xfffff000 进行按位与操作，可以得到当前任务的起始地址（即任务结构体的地址）。 */
 task_t* running_task()
 {
     asm volatile(
@@ -60,6 +68,8 @@ task_t* running_task()
 
 void schedule()
 {
+    assert(!get_interrupt_state()); // 不可中断
+
     task_t* current = running_task();
     task_t* next = task_search(TASK_READY);
 
@@ -127,6 +137,7 @@ u32 thread_a()
     while (true)
     {
         printk("A");
+        yield();
     }
 }
 
@@ -137,6 +148,7 @@ u32 thread_b()
     while (true)
     {
         printk("B");
+        yield();
     }
 }
 
@@ -147,6 +159,7 @@ u32 thread_c()
     while (true)
     {
         printk("C");
+        yield();
     }
 }
 

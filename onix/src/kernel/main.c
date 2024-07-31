@@ -1,3 +1,4 @@
+
 #include <onix/debug.h>
 #include <onix/interrupt.h>
 
@@ -10,6 +11,7 @@ extern void clock_init();
 extern void time_init();
 extern void rtc_init();
 extern void task_init();
+extern void syscall_init();
 extern void hang();
 
 void intr_test()
@@ -32,5 +34,7 @@ void kernel_init()
     // rtc_init();
 
     task_init();
+    syscall_init();
+
     set_interrupt_state(true);
 }

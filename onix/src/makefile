@@ -49,6 +49,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/lib/vsprintf.o \
 	$(BUILD)/lib/stdlib.o \
 	$(BUILD)/kernel/gate.o \
+	$(BUILD)/lib/syscall.o \
 	
 
 	$(shell mkdir -p $(dir $@))
